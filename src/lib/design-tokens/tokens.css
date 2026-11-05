@@ -1,0 +1,223 @@
+/*
+ * JARVIS design tokens — UI.2 + UI.3
+ * Authority: DESIGN.md frontmatter. Mirrored in index.ts. Wired through Tailwind v4 @theme in app/globals.css.
+ * Do not consume raw hex/font strings in components — go through tokens or Tailwind utilities resolved to tokens.
+ */
+
+:root {
+  /* Color — base roles */
+  --jarvis-color-void: #0a0a0a;
+  --jarvis-color-ink: #ededed;
+  --jarvis-color-panel: #020617;
+  --jarvis-color-panel-soft: #0f172a;
+  --jarvis-color-border-subtle: #ffffff1a;
+  --jarvis-color-cyan-signal: #22d3ee;
+  --jarvis-color-sky-focus: #38bdf8;
+  --jarvis-color-emerald-local: #6ee7b7;
+  --jarvis-color-amber-review: #fbbf24;
+  --jarvis-color-rose-blocked: #fb7185;
+  --jarvis-color-white: #ffffff;
+  --jarvis-color-black: #000000;
+  --jarvis-color-violet: #a78bfa;
+
+  /* Color — semantic governance aliases */
+  --jarvis-color-signal: var(--jarvis-color-cyan-signal);
+  --jarvis-color-focus: var(--jarvis-color-sky-focus);
+  --jarvis-color-local: var(--jarvis-color-emerald-local);
+  --jarvis-color-review: var(--jarvis-color-amber-review);
+  --jarvis-color-blocked: var(--jarvis-color-rose-blocked);
+
+  /* Shell registers — AP-J1 (capstone design language).
+     The cockpit shell renders on deep glass, where several base roles need a
+     lifted (higher-luminance) rendering to stay readable. Each register below
+     is the DOCUMENTED on-glass rendering of exactly one base role — not a new
+     palette. The cockpit's former private palette (--jcc-*) now resolves
+     through these registers, so there is ONE token system.
+
+     Color law (mirrors the charter discipline in JARVIS's palette):
+     - AMBER (--jarvis-shell-gate*) is reserved for Gate-touching state and
+       means nothing else. If an element is amber, it touches the Human Gate.
+     - Progress fills use the emerald->sky range (base tokens, no register).
+     - THE one interactive accent is --jarvis-shell-accent (sky-focus
+       register): selection, focus, active navigation.
+     - Neutrals (surface/ink/stone) carry everything else. */
+  --jarvis-shell-ink: #eaf1fb; /* ink on glass */
+  --jarvis-shell-ink-dim: #8ea4c4; /* stone: secondary ink */
+  --jarvis-shell-ink-faint: #46587a; /* stone: metadata ink */
+  --jarvis-shell-accent: #86bcff; /* sky-focus register — THE interactive accent */
+  --jarvis-shell-signal: #5fe6e0; /* cyan-signal register — live/evidence, read-only */
+  --jarvis-shell-signal-deep: #1ea7a0; /* cyan-signal register (deep end) */
+  --jarvis-shell-gate: #ffb24d; /* amber-review register — GATE-TOUCHING ONLY */
+  --jarvis-shell-gate-deep: #ff8a1f; /* amber-review register (deep end) — GATE ONLY */
+  --jarvis-shell-blocked: #ff6b6b; /* rose-blocked register */
+  --jarvis-shell-glass: linear-gradient(
+    150deg,
+    rgba(120, 160, 220, 0.09),
+    rgba(30, 52, 96, 0.05)
+  ); /* panel register — glass surface */
+  --jarvis-shell-glass-hi: linear-gradient(
+    150deg,
+    rgba(140, 180, 235, 0.15),
+    rgba(40, 64, 112, 0.07)
+  ); /* panel-soft register — raised glass */
+  --jarvis-shell-stroke: rgba(150, 190, 255, 0.13); /* border-subtle register */
+  --jarvis-shell-stroke-hi: rgba(170, 205, 255, 0.26); /* border-subtle register (focused) */
+
+  /* Theme — UI.7 default (blue). ThemeProvider overrides these on the root. */
+  --color-theme-primary: var(--jarvis-color-sky-focus);
+  --color-theme-glow: rgba(56, 189, 248, 0.32);
+
+  /* Focus ring — UI.9 */
+  --jarvis-focus-ring-color: var(--jarvis-color-signal);
+  --jarvis-focus-ring-width: 2px;
+  --jarvis-focus-ring-offset: 2px;
+
+  /* Pipeline stage palette — UI.10. Stage tokens compose the existing
+     semantic governance roles so a theme retune cascades automatically. */
+  --jarvis-color-pipeline-capture: var(--jarvis-color-signal);
+  --jarvis-color-pipeline-classify: var(--jarvis-color-focus);
+  --jarvis-color-pipeline-route: var(--jarvis-color-violet);
+  --jarvis-color-pipeline-human-gate: var(--jarvis-color-review);
+  --jarvis-color-pipeline-execute: var(--jarvis-color-local);
+  --jarvis-color-pipeline-audit: var(--jarvis-color-ink);
+  --jarvis-color-pipeline-forbidden: var(--jarvis-color-blocked);
+
+  /* Stones + accent palette — DD.0. Pure tokens; components consume
+     these through CSS variables — no raw hex in component code. */
+  --jarvis-color-stone-space: #1e90ff;
+  --jarvis-color-stone-time: #34d399;
+  --jarvis-color-stone-mind: #fbbf24;
+  --jarvis-color-stone-soul: #fb923c;
+  --jarvis-color-stone-reality: var(--jarvis-color-cyan-signal);
+  --jarvis-color-stone-power: var(--jarvis-color-ruby);
+  --jarvis-color-gold: #facc15;
+  --jarvis-color-flame: #f97316;
+  --jarvis-color-ruby: #e0115f;
+
+  /* Pulse timing — DD.0. Pulse durations are governed independently of
+     the motion-system durations so the pipeline can dwell at the gate
+     longer than a normal interaction. */
+  --jarvis-pulse-duration-short: 800ms;
+  --jarvis-pulse-duration-normal: 1600ms;
+  --jarvis-pulse-duration-long: 3200ms;
+  --jarvis-pulse-duration-dwell: 1200ms;
+  --jarvis-pulse-easing: var(--jarvis-motion-easing-orbit);
+
+  /* Font - local-first. Fraunces is the bundled Quincy stand-in. */
+  --jarvis-font-display: var(
+    --font-jarvis-display,
+    "Fraunces",
+    Georgia,
+    serif
+  );
+  --jarvis-font-body: var(
+    --font-jarvis-display,
+    "Fraunces",
+    Georgia,
+    serif
+  );
+  --jarvis-font-mono: var(
+    --font-jarvis-mono,
+    "JetBrains Mono",
+    ui-monospace,
+    monospace
+  );
+
+  /* Radius */
+  --jarvis-radius-sm: 4px;
+  --jarvis-radius-md: 6px;
+  --jarvis-radius-lg: 8px;
+  --jarvis-radius-pill: 9999px;
+
+  /* Space */
+  --jarvis-space-xs: 4px;
+  --jarvis-space-sm: 8px;
+  --jarvis-space-md: 16px;
+  --jarvis-space-lg: 24px;
+  --jarvis-space-xl: 32px;
+
+  /* Shadow — reserved for cinematic depth, not generic card elevation */
+  --jarvis-shadow-orb-atmosphere: 0 0 90px rgba(34, 211, 238, 0.22);
+  --jarvis-shadow-cockpit-depth: 0 20px 80px rgba(2, 6, 23, 0.3);
+
+  /* Typography scale — UI.3 */
+  --jarvis-text-display-font: var(--jarvis-font-display);
+  --jarvis-text-display-size: 3rem;
+  --jarvis-text-display-weight: 600;
+  --jarvis-text-display-line-height: 1.05;
+  --jarvis-text-display-letter-spacing: normal;
+
+  --jarvis-text-headline-font: var(--jarvis-font-display);
+  --jarvis-text-headline-size: 2rem;
+  --jarvis-text-headline-weight: 600;
+  --jarvis-text-headline-line-height: 1.15;
+  --jarvis-text-headline-letter-spacing: normal;
+
+  --jarvis-text-title-font: var(--jarvis-font-display);
+  --jarvis-text-title-size: 1.25rem;
+  --jarvis-text-title-weight: 600;
+  --jarvis-text-title-line-height: 1.3;
+  --jarvis-text-title-letter-spacing: normal;
+
+  --jarvis-text-body-font: var(--jarvis-font-body);
+  --jarvis-text-body-size: 1rem;
+  --jarvis-text-body-weight: 400;
+  --jarvis-text-body-line-height: 1.5;
+  --jarvis-text-body-letter-spacing: normal;
+
+  --jarvis-text-label-font: var(--jarvis-font-mono);
+  --jarvis-text-label-size: 0.75rem;
+  --jarvis-text-label-weight: 600;
+  --jarvis-text-label-line-height: 1.2;
+  --jarvis-text-label-letter-spacing: 0.16em;
+  --jarvis-text-label-text-transform: uppercase;
+
+  /* Model-voice register — AP-J1. Model-GENERATED text renders visibly
+     distinct from system fact: italic light serif. System fact is roman.
+     Applied via data-text-register="model-voice" | "system-fact". */
+  --jarvis-text-voice-font: var(--jarvis-font-display);
+  --jarvis-text-voice-style: italic;
+  --jarvis-text-voice-weight: 300;
+
+  /* Motion — UI.5 */
+  --jarvis-motion-duration-instant: 0ms;
+  --jarvis-motion-duration-fast: 120ms;
+  --jarvis-motion-duration-normal: 240ms;
+  --jarvis-motion-duration-slow: 480ms;
+  --jarvis-motion-duration-cinematic: 960ms;
+
+  --jarvis-motion-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+  --jarvis-motion-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --jarvis-motion-easing-enter: cubic-bezier(0, 0, 0.2, 1);
+  --jarvis-motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --jarvis-motion-easing-orbit: cubic-bezier(0.45, 0, 0.55, 1);
+
+  /* Motion vocabulary — AP-J1. The capstone's SMALL set of intentional
+     motions; surfaces pull from these, they do not invent ad-hoc animation.
+     Motion marks GOVERNANCE MOMENTS. JS mirror + framer-motion primitives:
+     src/lib/design-language/motion-vocabulary.ts (kept in lockstep by test).
+     Budget: core beats 120-240ms; ONE signature moment (gate resolution)
+     may settle to 480ms. Everything else is still. */
+  --jarvis-motion-vocab-fade: 160ms; /* calm fade — state/panel transitions */
+  --jarvis-motion-vocab-fill: 240ms; /* measured fill — rollup/progress bars (non-bouncy) */
+  --jarvis-motion-vocab-gate: 220ms; /* gate resolution core beat */
+  --jarvis-motion-vocab-gate-settle: 480ms; /* the ONE cinematic allowance: gate afterglow */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --jarvis-motion-duration-instant: 0ms;
+    --jarvis-motion-duration-fast: 0ms;
+    --jarvis-motion-duration-normal: 0ms;
+    --jarvis-motion-duration-slow: 0ms;
+    --jarvis-motion-duration-cinematic: 0ms;
+    --jarvis-motion-vocab-fade: 0ms;
+    --jarvis-motion-vocab-fill: 0ms;
+    --jarvis-motion-vocab-gate: 0ms;
+    --jarvis-motion-vocab-gate-settle: 0ms;
+    --jarvis-pulse-duration-short: 0ms;
+    --jarvis-pulse-duration-normal: 0ms;
+    --jarvis-pulse-duration-long: 0ms;
+    --jarvis-pulse-duration-dwell: 0ms;
+  }
+}

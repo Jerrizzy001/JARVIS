@@ -1,0 +1,32 @@
+import { z } from "zod";
+
+export const MAX_CHAT_MESSAGES = 50;
+export const MAX_CHAT_MESSAGE_CHARS = 4000;
+
+export const SUPPORTED_PROVIDERS = ["openai", "anthropic"] as const;
+export type SupportedProvider = (typeof SUPPORTED_PROVIDERS)[number];
+
+export const MessageSchema = z.object({
+  id: z.string().min(1).optional(),
+  role: z.enum(["user", "assistant", "system"]),
+  content: z
+    .string()
+    .min(1, "content must be a non-empty string")
+    .max(
+      MAX_CHAT_MESSAGE_CHARS,
+      `content must be ${MAX_CHAT_MESSAGE_CHARS} characters or fewer`,
+    ),
+});
+
+export const ChatRequestSchema = z.object({
+  sessionId: z.string().min(1).optional(),
+  assistantMessageId: z.string().min(1).optional(),
+  messages: z
+    .array(MessageSchema)
+    .min(1, "messages must not be empty")
+    .max(
+      MAX_CHAT_MESSAGES,
+      `messages must contain ${MAX_CHAT_MESSAGES} items or fewer`,
+    ),
+  provider: z.enum(SUPPORTED_PROVIDERS).optional(),
+});

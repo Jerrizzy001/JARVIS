@@ -1,0 +1,186 @@
+import Database from "better-sqlite3";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { listRollbacks, recordRollback } from "../db/rollbacks";
+import { applyMigrations } from "../db/schema";
+import { ROLLBACK_TTL_MS } from "../tools/fs-undo";
+import { latestAvailableRollback, summarizeRollback } from "./visibility";
+
+let db: Database.Database;
+let now: number;
+
+beforeEach(() => {
+  db = new Database(":memory:");
+  applyMigrations(db);
+  now = 10_000;
+});
+
+afterEach(() => {
+  db.close();
+});
+
+function addRollback(input: {
+  id: string;
+  sessionId?: string;
+  payload?: unknown;
+  createdAt?: number;
+  appliedAt?: number | null;
+}) {
+  recordRollback(db, {
+    id: input.id,
+    execution_id: `exec-${input.id}`,
+    session_id: input.sessionId ?? "session-1",
+    kind: "fs_restore_content",
+    payload_json: JSON.stringify(
+      input.payload ?? {
+        path: "hello.txt",
+        previousContent: "secret previous content",
+        previousLength: 23,
+      },
+    ),
+    created_at: input.createdAt ?? now - 1_000,
+    applied_at: input.appliedAt,
+  });
+}
+
+describe("rollback visibility", () => {
+  it("lists current session rollbacks only", () => {
+    addRollback({ id: "one", sessionId: "session-1" });
+    addRollback({ id: "two", sessionId: "session-2" });
+
+    expect(
+      listRollbacks(db, { sessionId: "session-1" }).map((row) => row.id),
+    ).toEqual(["one"]);
+  });
+
+  it("latest returns the most recent unapplied available rollback", () => {
+    addRollback({ id: "older", createdAt: now - 2_000 });
+    addRollback({ id: "newer", createdAt: now - 1_000 });
+
+    expect(
+      latestAvailableRollback(
+        listRollbacks(db, { sessionId: "session-1" }),
+        now,
+      ),
+    ).toMatchObject({
+      id: "newer",
+      available: true,
+      path_summary: "hello.txt",
+    });
+  });
+
+  it("excludes applied and expired rollbacks from latest", () => {
+    addRollback({
+      id: "applied",
+      createdAt: now - 1_000,
+      appliedAt: now - 500,
+    });
+    addRollback({
+      id: "expired",
+      createdAt: now - ROLLBACK_TTL_MS - 1,
+    });
+
+    expect(
+      latestAvailableRollback(
+        listRollbacks(db, { sessionId: "session-1" }),
+        now,
+      ),
+    ).toBeNull();
+    expect(
+      listRollbacks(db, { sessionId: "session-1" }).map((row) =>
+        summarizeRollback(row, now),
+      ),
+    ).toMatchObject([
+      { id: "applied", expiry_status: "applied", available: false },
+      { id: "expired", expiry_status: "expired", available: false },
+    ]);
+  });
+
+  it("does not expose raw previousContent or backup file contents", () => {
+    addRollback({ id: "inline" });
+    addRollback({
+      id: "backup",
+      payload: {
+        path: "large.txt",
+        backupPath: ".jarvis-trash/backups/exec-backup",
+        previousLength: 70_000,
+      },
+    });
+
+    const summaries = listRollbacks(db, { sessionId: "session-1" }).map((row) =>
+      summarizeRollback(row, now),
+    );
+    const serialized = JSON.stringify(summaries);
+
+    expect(serialized).not.toContain("secret previous content");
+    expect(serialized).not.toContain("backupPath");
+    expect(serialized).not.toContain(".jarvis-trash");
+    expect(summaries.map((summary) => summary.path_summary)).toEqual([
+      "large.txt",
+      "hello.txt",
+    ]);
+  });
+
+  it("redacts unsafe and protected rollback paths", () => {
+    addRollback({
+      id: "unsafe",
+      payload: { path: "../escape.txt" },
+      createdAt: now - 2_000,
+    });
+    addRollback({
+      id: "protected",
+      payload: { path: ".env.local" },
+      createdAt: now - 1_000,
+    });
+
+    expect(
+      listRollbacks(db, { sessionId: "session-1" }).map(
+        (row) => summarizeRollback(row, now).path_summary,
+      ),
+    ).toEqual(["[protected path]", "[unsafe path]"]);
+  });
+
+  it("summarizes append rollbacks without exposing extra payload fields", () => {
+    recordRollback(db, {
+      id: "append",
+      execution_id: "exec-append",
+      session_id: "session-1",
+      kind: "fs_truncate_to_length",
+      payload_json: JSON.stringify({
+        path: "notes.txt",
+        previousLength: 12,
+      }),
+      created_at: now - 1_000,
+    });
+
+    expect(
+      summarizeRollback(listRollbacks(db, { sessionId: "session-1" })[0], now),
+    ).toMatchObject({
+      id: "append",
+      kind: "fs_truncate_to_length",
+      path_summary: "notes.txt",
+      source_tool_call_id: "exec-append",
+      available: true,
+    });
+  });
+
+  it("summarizes directory-create rollbacks", () => {
+    recordRollback(db, {
+      id: "mkdir",
+      execution_id: "exec-mkdir",
+      session_id: "session-1",
+      kind: "fs_rmdir_empty",
+      payload_json: JSON.stringify({ path: "new-folder" }),
+      created_at: now - 1_000,
+    });
+
+    expect(
+      summarizeRollback(listRollbacks(db, { sessionId: "session-1" })[0], now),
+    ).toMatchObject({
+      id: "mkdir",
+      kind: "fs_rmdir_empty",
+      path_summary: "new-folder",
+      source_tool_call_id: "exec-mkdir",
+      available: true,
+    });
+  });
+});

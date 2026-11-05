@@ -1,0 +1,82 @@
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+
+<!-- END:nextjs-agent-rules -->
+
+<claude-mem-context>
+# Memory Context
+
+# [jarvis] recent context, 2026-05-21 7:20pm GMT+1
+
+Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
+Format: ID TIME TYPE TITLE
+Fetch details: get_observations([IDs]) | Search: mem-search skill
+
+Stats: 50 obs (27,828t read) | 2,293,124t work | 99% savings
+
+### May 16, 2026
+
+S9 User asked where the PDF was saved — Claude provided the full file path (May 16, 7:26 AM)
+S8 JARVIS codebase audit against ARCHITECTURE.md v3.1 and Claude audit context.md, output as PDF (May 16, 7:26 AM)
+S20 Re-run updated JARVIS codebase audit and export as PDF — streaming checkpoint audit for Phase 1B readiness (May 16, 7:31 AM)
+S41 JARVIS Phase 3.75 STT layer modernisation — TranscriptionProviderStatus refactor, LocalWhisperRuntime class, and committing the changes (May 16, 10:46 AM)
+
+### May 21, 2026
+
+793 12:15a 🟣 VoiceRuntimeBoundaryCoordinator Rebuilt with Lifecycle State Machine, Operation Deduplication, Ordering Detection, and Stale-Session Rejection
+795 " 🟣 Full Test Suite Passes After Phase 4F Coordinator Upgrade: 825 Tests Across 110 Files
+796 12:16a 🔵 Pre-existing Turbopack NFT Warning in Production Build from workspace.ts Dynamic Path Usage
+797 " ✅ Phase 4F Coordinator Work Staged and Ready: 445 Insertions Across 7 Files
+798 12:20a 🔵 AGENTS.md Has Both Staged and Unstaged Changes After Session
+799 7:08a 🟣 JARVIS Phase 4G.1 — Cloud Voice Routing Policy Scaffold Initiated
+800 7:14a 🟣 JARVIS Phase 4D: Live Assistant Response Stream Metadata Ingestion & Chunk Scheduling Scaffold
+801 7:15a 🔵 JARVIS Phase 4D Stream Metadata Ingestion Already Fully Implemented Prior to This Session
+802 " 🟣 Phase 4G: VoiceCloudRoutingPolicy — Disabled-by-Default Metadata-Only Cloud Routing Gate
+803 " 🟣 Phase 4G Tests: cloud-routing-policy.test.ts with Telemetry Safety and Anti-Wiring Freeze Assertions
+804 " 🟣 Phase 4G README Documentation and Test Suite Growth from 737 to 848
+805 7:16a ✅ Phase 4G Voice Streaming Changes Committed to Repository
+806 7:23a 🟣 JARVIS Phase 4D: Live Assistant Response Stream Metadata Ingestion and Chunk Scheduling Scaffold
+807 7:24a 🟣 VoiceCloudBudgetGuard: Metadata-Only Cloud Budget Evaluation with Multi-Window Enforcement
+808 " 🟣 Budget Guard Type System: VoiceCloudBudget\* Interfaces Added to types.ts and telemetry/types.ts
+809 " 🟣 VoiceCloudBudgetGuard Tests: 10 Cases Including Telemetry Safety and No-Wiring Assertions
+810 " 🔴 TypeScript Error: Array.push() Return Type Incompatible with void | Promise&lt;void&gt; Telemetry Callback
+811 " ✅ Build Status: 860 Tests Pass, Build Clean, Pre-existing NFT Warning Remains
+812 7:28a 🟣 JARVIS Phase 4D: Live Assistant Response Stream Metadata Ingestion & Chunk Scheduling Scaffold
+813 7:29a 🔵 JARVIS Voice Streaming Module Architecture: Existing Phase 4D–4G Scaffold
+814 " 🟣 Phase 4G: VoiceCloudConsentPolicy — Multi-Layer Disclosure Guard for Cloud Voice Routing
+815 " 🟣 Phase 4G Consent Policy Test Suite: Metadata Safety, Disclosure Waterfall, and No-Wiring Verification
+816 " ✅ All Checks Green: 870 Tests, Clean TypeScript, Clean Lint, Successful Next.js Build
+817 7:30a 🔵 Phase 4G Consent Policy Changes Committed — Clean Working Tree for Next Implementation
+818 7:36a 🟣 JARVIS Phase 4D: Stream Metadata Ingestion and Chunk Scheduling Scaffold
+819 7:37a 🔴 Vitest Set vs ArrayContaining Matcher Incompatibility Fixed
+820 " 🟣 Phase 4G Cloud Routing Policy Freeze — Complete and Frozen
+821 " 🔵 JARVIS Full Test Suite: 874 Tests Passing After Phase 4G Freeze
+822 7:43a 🟣 JARVIS Phase 4D: Voice Stream Metadata Ingestion & Chunk Scheduling Scaffold
+823 7:44a 🔵 JARVIS Voice Streaming Module: Full Type Surface and Phase Status (4D–4G)
+824 " 🟣 Phase 4H: VoicePrivacyPolicy — Metadata-Only Voice Data Classification and Deny-by-Default Guard
+825 " 🔴 Test Regex False Positive: "synthesized_audio" String Literal Matched Forbidden Wiring Regex
+826 " ✅ Phase 4H Full Validation: 884 Tests Pass, TypeScript Clean, Lint Clean, Build Succeeds
+827 7:51a 🟣 JARVIS Phase 4D: Voice Stream Metadata Ingestion & Chunk Scheduling Scaffold
+828 7:52a 🔵 JARVIS Voice Streaming: Full Module Inventory and Telemetry Architecture Pre-Phase-4D-Slice
+829 " 🟣 Voice Telemetry Hygiene Module: Centralized Sanitization for All Voice-Streaming Emitters
+830 " 🟣 Voice Telemetry Hygiene: 7-Test Suite Covering Allowlist, Strip, Redaction, Stress, and No-Wiring Invariants
+831 " 🔴 TypeScript Error: sanitizeVoiceTelemetryEvent Parameter Type Widened from Record to object
+832 " 🔴 pipeline.test.ts Freeze Test Failed: approval Regex Matched emitMetadataOnlyVoiceTelemetry in barge-in-coordinator.ts
+833 " ✅ Final Test Count After Phase 4D Telemetry Hygiene Slice: 891 Tests Passing (Up from 737)
+837 6:17p ⚖️ Phase 5 W1 Scope Defined: Project Identity & Registry Layer for JARVIS
+838 6:19p 🔵 JARVIS Pre-existing Project State vs. New Project Registry — Two Separate Tables
+839 " 🟣 Phase 5 W1: projects Table, Domain Models, and DB Layer Implemented
+840 6:23p ⚖️ Phase 5 W1: Project Identity & Registry — Architecture Constraints Defined
+841 6:24p 🟣 Phase 5 W1: Project Tool Layer Implemented — project.list and project.get Live
+842 " 🟣 Phase 5 W1: SQLite Migration 014_project_registry Added with CHECK Constraints
+843 " 🟣 Phase 5 W1: Project Domain Models and DB Access Layer Created
+844 " 🟣 Phase 5 W1: Full Test Suite Added — 33 New Tests Across 4 New Test Files, All 907 Tests Pass
+S44 Phase 5 W1: Project Identity & Registry + Project State Schema — implement read-only project registry layer for JARVIS (May 21, 6:26 PM)
+845 6:36p 🟣 Phase 5 A3: Project Source Ledger Foundation
+846 6:37p 🟣 Phase 5 A2: project.register Promoted from Scaffold to Live Approval-Gated Tool
+
+Access 2293k tokens of past work via get_observations([IDs]) or mem-search skill.
+</claude-mem-context>
